@@ -45,9 +45,11 @@ func (c *BaseClient) SendRequest(req *http.Request) (*APIResponse, error) {
 		apiResponse.IsOk = false
 
 		var apiErr APIError
-		if err = json.NewDecoder(response.Body).Decode(&apiErr); err != nil {
-			apiResponse.Error = apiErr
+		err = json.NewDecoder(response.Body).Decode(&apiErr)
+		if err != nil {
+			return &apiResponse, fmt.Errorf("failed to parse apperror from response body: %w", err)
 		}
+		apiResponse.Error = apiErr
 	}
 
 	return &apiResponse, nil

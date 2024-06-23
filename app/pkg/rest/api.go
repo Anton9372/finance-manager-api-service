@@ -10,13 +10,13 @@ import (
 )
 
 type APIError struct {
+	Code             string `json:"code,omitempty"`
 	Message          string `json:"message,omitempty"`
-	ErrorCode        string `json:"error_code,omitempty"`
 	DeveloperMessage string `json:"developer_message,omitempty"`
 }
 
 func (e *APIError) ToString() string {
-	return fmt.Sprintf("Err Code: %s, Err: %s, Developer Err: %s", e.ErrorCode, e.Message, e.DeveloperMessage)
+	return fmt.Sprintf("Err Code: %s, Err: %s, Developer Err: %s", e.Code, e.Message, e.DeveloperMessage)
 }
 
 type APIResponse struct {

@@ -20,7 +20,6 @@ type SignUpUserDTO struct {
 }
 
 type UpdateUserDTO struct {
-	//UUID string `json:"uuid"`
 	Name             string `json:"name"`
 	Email            string `json:"email"`
 	OldPassword      string `json:"old_password"`
