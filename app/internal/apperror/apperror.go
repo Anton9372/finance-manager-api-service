@@ -41,9 +41,8 @@ func (e *AppError) Marshal() []byte {
 	return bytes
 }
 
-// TODO
 func UnauthorizedError(message string) *AppError {
-	return NewAppError("API-000###", message, "")
+	return NewAppError("API-000401", message, "user unauthorized")
 }
 
 func BadRequestError(message string) *AppError {

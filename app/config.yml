@@ -7,6 +7,6 @@ listen:
 user_service:
   url: http://localhost:10001/api
 operation_service:
-  url: http://fm-operation_service:10002/api
+  url: http://localhost:10002/api
 stats_service:
-  url: http://fm-stats_service:10003/api
+  url: http://localhost:10003/api

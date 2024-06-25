@@ -19,7 +19,7 @@ type Service interface {
 	Create(ctx context.Context, dto CreateCategoryDTO) (string, error)
 	GetByUUID(ctx context.Context, uuid string) ([]byte, error)
 	GetByUserUUID(ctx context.Context, userUUID string) ([]byte, error)
-	Update(ctx context.Context, uuid string, dto UpdateCategoryDTO) error
+	Update(ctx context.Context, dto UpdateCategoryDTO) error
 	Delete(ctx context.Context, uuid string) error
 }
 
@@ -162,11 +162,11 @@ func (c *client) GetByUserUUID(ctx context.Context, userUUID string) ([]byte, er
 	return categories, nil
 }
 
-func (c *client) Update(ctx context.Context, uuid string, dto UpdateCategoryDTO) error {
+func (c *client) Update(ctx context.Context, dto UpdateCategoryDTO) error {
 	c.base.Logger.Info("Update category")
 
 	c.base.Logger.Debug("build url")
-	url, err := c.base.BuildURL(fmt.Sprintf("%s/%s", c.Resource+"/one", uuid), nil)
+	url, err := c.base.BuildURL(fmt.Sprintf("%s/%s", c.Resource+"/one", dto.UUID), nil)
 	if err != nil {
 		return fmt.Errorf("failed to build url: %w", err)
 	}
