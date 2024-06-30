@@ -4,10 +4,12 @@ import (
 	"errors"
 	"finance-manager-api-service/internal/client/operation_service/category"
 	"finance-manager-api-service/internal/client/operation_service/operation"
+	"finance-manager-api-service/internal/client/stats_service"
 	"finance-manager-api-service/internal/client/user_service"
 	"finance-manager-api-service/internal/config"
 	"finance-manager-api-service/internal/handler/auth"
 	"finance-manager-api-service/internal/handler/operations"
+	"finance-manager-api-service/internal/handler/stats"
 	"finance-manager-api-service/pkg/cache/freecache"
 	"finance-manager-api-service/pkg/jwt"
 	"finance-manager-api-service/pkg/logging"
@@ -55,6 +57,10 @@ func main() {
 	operationService := operation.NewService(cfg.OperationService.URL, "/operations", logger)
 	operationHandler := operations.NewOperationHandler(logger, operationService)
 	operationHandler.Register(router)
+
+	statsService := stats_service.NewService(cfg.StatsService.URL, "/stats", logger)
+	statsHandler := stats.NewHandler(logger, statsService)
+	statsHandler.Register(router)
 
 	logger.Info("start application")
 	start(router, logger, cfg)

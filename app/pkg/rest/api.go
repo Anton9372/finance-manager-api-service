@@ -9,10 +9,15 @@ import (
 	"net/url"
 )
 
+type ErrorFields map[string]string
+type ErrorParams map[string]string
+
 type APIError struct {
-	Code             string `json:"code,omitempty"`
-	Message          string `json:"message,omitempty"`
-	DeveloperMessage string `json:"developer_message,omitempty"`
+	Code             string      `json:"code,omitempty"`
+	Message          string      `json:"message,omitempty"`
+	DeveloperMessage string      `json:"developer_message,omitempty"`
+	Fields           ErrorFields `json:"fields,omitempty"`
+	Params           ErrorParams `json:"params,omitempty"`
 }
 
 func (e *APIError) ToString() string {

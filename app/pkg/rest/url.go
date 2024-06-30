@@ -13,8 +13,8 @@ type FilterOptions struct {
 
 // GET /api/users?email=in:aboba@gmail.com,123@ok.ru,...
 func (fo *FilterOptions) ToString() string {
-	if fo.Operator != "" {
-		return fmt.Sprintf("%s:%s", fo.Operator, strings.Join(fo.Values, ","))
+	if fo.Operator == "" {
+		return strings.Join(fo.Values, ",")
 	}
-	return strings.Join(fo.Values, ",")
+	return fmt.Sprintf("%s:%s", fo.Operator, strings.Join(fo.Values, ","))
 }

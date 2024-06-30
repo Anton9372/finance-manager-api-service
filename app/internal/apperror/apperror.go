@@ -9,11 +9,16 @@ var (
 	ErrNotFound = NewAppError("API-000404", "not found", "not found")
 )
 
+type ErrorFields map[string]string
+type ErrorParams map[string]string
+
 type AppError struct {
-	Err              error  `json:"-"`
-	Code             string `json:"code,omitempty"`
-	Message          string `json:"message,omitempty"`
-	DeveloperMessage string `json:"developer_message,omitempty"`
+	Err              error       `json:"-"`
+	Code             string      `json:"code,omitempty"`
+	Message          string      `json:"message,omitempty"`
+	DeveloperMessage string      `json:"developer_message,omitempty"`
+	Fields           ErrorFields `json:"fields,omitempty"`
+	Params           ErrorParams `json:"params,omitempty"`
 }
 
 func NewAppError(code, message, developerMessage string) *AppError {
@@ -39,6 +44,14 @@ func (e *AppError) Marshal() []byte {
 		return nil
 	}
 	return bytes
+}
+
+func (e *AppError) WithFields(fields ErrorFields) {
+	e.Fields = fields
+}
+
+func (e *AppError) WithParams(params ErrorParams) {
+	e.Params = params
 }
 
 func UnauthorizedError(message string) *AppError {
