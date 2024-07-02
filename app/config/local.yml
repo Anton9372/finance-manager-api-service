@@ -5,8 +5,8 @@ listen:
   bind_ip: 0.0.0.0
   port: 10000
 user_service:
-  url: http://localhost:10001/api
+  url: http://us-app:10001/api
 operation_service:
-  url: http://localhost:10002/api
+  url: http://os-app:10002/api
 stats_service:
-  url: http://localhost:10003/api
+  url: http://ss-app:10003/api

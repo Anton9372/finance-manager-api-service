@@ -32,6 +32,27 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.HandlerFunc(http.MethodGet, statsURL, jwt.Middleware(apperror.Middleware(h.GetReport)))
 }
 
+// GetReport
+// @Summary 	Get report about user's financial operations
+// @Description Retrieves a list of operations with support for filtering and sorting.
+// @Security	JWTAuth
+// @Tags 		Stats
+// @Produce 	json
+// @Param 		user_uuid 	  path 	   string false  "User UUID"
+// @Param 		category_name path 	   string false  "Category name (supports operators: substr)"
+// @Param 		type	 	  path 	   string false  "Category type"
+// @Param 		category_id   path 	   string false  "Category ID"
+// @Param 		description   path 	   string false  "Description (supports operators: substr)"
+// @Param 		money_sum 	  path 	   string false  "Money sum (supports operators: eq, neq, lt, lte, gt, gte, between)"
+// @Param 		date_time     path 	   string false  "Date and time of operation (supports operators: eq, between; format: yyyy-mm-dd)"
+// @Param 		sort_by 	  path 	   string false  "Field to sort by (money_sum, date_time, description)"
+// @Param 		sort_order 	  path 	   string false  "Sort order (asc, desc)"
+// @Success 	200 		  {object} stats_service.Report "Report"
+// @Failure 	401 		   								"Unauthorized"
+// @Failure 	400 		  {object} apperror.AppError 	"Validation error in filter or sort parameters"
+// @Failure 	418 		  {object} apperror.AppError 	"Something wrong with application logic"
+// @Failure 	500 		  {object} apperror.AppError 	"Internal server error"
+// @Router /stats [get]
 func (h *handler) GetReport(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 

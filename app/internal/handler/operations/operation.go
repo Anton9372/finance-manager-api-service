@@ -37,6 +37,19 @@ func (h *operationHandler) Register(router *httprouter.Router) {
 	router.HandlerFunc(http.MethodDelete, operationByIdURL, jwt.Middleware(apperror.Middleware(h.DeleteOperation)))
 }
 
+// CreateOperation
+// @Summary 	Create operation
+// @Description Creates new operation
+// @Security	JWTAuth
+// @Tags 		Operation
+// @Accept		json
+// @Param 		input	body 	 operation.CreateOperationDTO	true	"Operation's data"
+// @Success 	201
+// @Failure 	401 		   						"Unauthorized"
+// @Failure 	400 	{object} apperror.AppError "Validation error"
+// @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 	{object} apperror.AppError "Internal server error"
+// @Router /operations [post]
 func (h *operationHandler) CreateOperation(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 	defer utils.CloseBody(h.Logger, r.Body)
@@ -56,6 +69,19 @@ func (h *operationHandler) CreateOperation(w http.ResponseWriter, r *http.Reques
 	return nil
 }
 
+// GetOperationByUUID
+// @Summary 	Get operation by uuid
+// @Description Get operation by uuid
+// @Security	JWTAuth
+// @Tags 		Operation
+// @Produce 	json
+// @Param 		uuid 	path 	 string 	true   		"Operation's uuid"
+// @Success 	200		{object} operation.Operation  	"Operation"
+// @Failure 	401 		   						"Unauthorized"
+// @Failure 	404 	{object} apperror.AppError "Operation not found"
+// @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 	{object} apperror.AppError "Internal server error"
+// @Router 		/operations/:uuid	[get]
 func (h *operationHandler) GetOperationByUUID(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -72,6 +98,20 @@ func (h *operationHandler) GetOperationByUUID(w http.ResponseWriter, r *http.Req
 	return nil
 }
 
+// PartiallyUpdateOperation
+// @Summary 	Update Operation
+// @Description Update Operation
+// @Security	JWTAuth
+// @Tags 		Operation
+// @Accept		json
+// @Param 		uuid 		path 	 string 						true  "Operation's uuid"
+// @Param 		input 		body 	 operation.UpdateOperationDTO 	true  "Operation's data"
+// @Success 	204
+// @Failure 	401 		   						"Unauthorized"
+// @Failure 	400 	{object} apperror.AppError "Validation error"
+// @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 	{object} apperror.AppError "Internal server error"
+// @Router /operations/:uuid [patch]
 func (h *operationHandler) PartiallyUpdateOperation(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -92,6 +132,18 @@ func (h *operationHandler) PartiallyUpdateOperation(w http.ResponseWriter, r *ht
 	return nil
 }
 
+// DeleteOperation
+// @Summary 	Delete operation
+// @Description Delete operation
+// @Security	JWTAuth
+// @Tags 		Operation
+// @Param 		uuid 	path 	 string 	true  "Operation's uuid"
+// @Success 	204
+// @Failure 	401 		   						"Unauthorized"
+// @Failure 	404 	{object} apperror.AppError "Operation is not found"
+// @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 	{object} apperror.AppError "Internal server error"
+// @Router /operations/:uuid [delete]
 func (h *operationHandler) DeleteOperation(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 

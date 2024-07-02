@@ -1,0 +1,941 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Finance-manager application",
+        "title": "Finance-manager API",
+        "contact": {
+            "name": "Anton",
+            "email": "ap363402@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:10000",
+    "basePath": "/api",
+    "paths": {
+        "/auth": {
+            "put": {
+                "description": "Auth user (POST) or update refresh token (PUT) and generate access token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Auth user and generate tokens or update refresh token",
+                "parameters": [
+                    {
+                        "description": "User's data",
+                        "name": "user",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/user_service.SignInUserDTO"
+                        }
+                    },
+                    {
+                        "description": "RefreshToken",
+                        "name": "token",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/jwt.RefreshToken"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/jwt.TokenAndRefreshToken"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request or invalid JSON body",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized: invalid credentials",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Auth user (POST) or update refresh token (PUT) and generate access token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Auth user and generate tokens or update refresh token",
+                "parameters": [
+                    {
+                        "description": "User's data",
+                        "name": "user",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/user_service.SignInUserDTO"
+                        }
+                    },
+                    {
+                        "description": "RefreshToken",
+                        "name": "token",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/jwt.RefreshToken"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/jwt.TokenAndRefreshToken"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request or invalid JSON body",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized: invalid credentials",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/categories": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get list of categories belonging to user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get user's categories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User's uuid",
+                        "name": "user_uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categories",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/category.Category"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Creates new category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Create category",
+                "parameters": [
+                    {
+                        "description": "Category data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/category.CreateCategoryDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/categories/:uuid": {
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Delete category",
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Delete category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category's uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Category is not found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Update category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Update category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category's uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Category's data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/category.UpdateCategoryDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/metric": {
+            "get": {
+                "description": "Checks that the server is up and running",
+                "tags": [
+                    "Heartbeat"
+                ],
+                "summary": "Heartbeat",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/operations": {
+            "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Creates new operation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Operation"
+                ],
+                "summary": "Create operation",
+                "parameters": [
+                    {
+                        "description": "Operation's data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/operation.CreateOperationDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/operations/:uuid": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Get operation by uuid",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Operation"
+                ],
+                "summary": "Get operation by uuid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Operation's uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation",
+                        "schema": {
+                            "$ref": "#/definitions/operation.Operation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Operation not found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Delete operation",
+                "tags": [
+                    "Operation"
+                ],
+                "summary": "Delete operation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Operation's uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Operation is not found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Update Operation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Operation"
+                ],
+                "summary": "Update Operation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Operation's uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Operation's data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/operation.UpdateOperationDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "Register user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register user",
+                "parameters": [
+                    {
+                        "description": "User's data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user_service.SignUpUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/jwt.TokenAndRefreshToken"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats": {
+            "get": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ],
+                "description": "Retrieves a list of operations with support for filtering and sorting.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stats"
+                ],
+                "summary": "Get report about user's financial operations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User UUID",
+                        "name": "user_uuid",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category name (supports operators: substr)",
+                        "name": "category_name",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category type",
+                        "name": "type",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "category_id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description (supports operators: substr)",
+                        "name": "description",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Money sum (supports operators: eq, neq, lt, lte, gt, gte, between)",
+                        "name": "money_sum",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date and time of operation (supports operators: eq, between; format: yyyy-mm-dd)",
+                        "name": "date_time",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Field to sort by (money_sum, date_time, description)",
+                        "name": "sort_by",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort order (asc, desc)",
+                        "name": "sort_order",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Report",
+                        "schema": {
+                            "$ref": "#/definitions/stats_service.Report"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error in filter or sort parameters",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "418": {
+                        "description": "Something wrong with application logic",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "apperror.AppError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "developer_message": {
+                    "type": "string"
+                },
+                "fields": {
+                    "$ref": "#/definitions/apperror.ErrorFields"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "params": {
+                    "$ref": "#/definitions/apperror.ErrorParams"
+                }
+            }
+        },
+        "apperror.ErrorFields": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "apperror.ErrorParams": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "category.Category": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user_uuid": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "category.CreateCategoryDTO": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user_uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "category.UpdateCategoryDTO": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "jwt.RefreshToken": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "jwt.TokenAndRefreshToken": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "operation.CreateOperationDTO": {
+            "type": "object",
+            "properties": {
+                "category_uuid": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "money_sum": {
+                    "type": "number"
+                }
+            }
+        },
+        "operation.Operation": {
+            "type": "object",
+            "properties": {
+                "category_uuid": {
+                    "type": "string"
+                },
+                "date_time": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "money_sum": {
+                    "type": "number"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "operation.UpdateOperationDTO": {
+            "type": "object",
+            "properties": {
+                "category_uuid": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "money_sum": {
+                    "type": "number"
+                }
+            }
+        },
+        "stats_service.Operation": {
+            "type": "object",
+            "properties": {
+                "category_uuid": {
+                    "type": "string"
+                },
+                "date_time": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "money_sum": {
+                    "type": "number"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "stats_service.Report": {
+            "type": "object",
+            "properties": {
+                "operations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/stats_service.Operation"
+                    }
+                },
+                "total_money_sum": {
+                    "type": "number"
+                }
+            }
+        },
+        "user_service.SignInUserDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "user_service.SignUpUserDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "repeated_password": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

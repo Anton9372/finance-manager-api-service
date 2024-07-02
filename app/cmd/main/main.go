@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	_ "finance-manager-api-service/docs"
 	"finance-manager-api-service/internal/client/operation_service/category"
 	"finance-manager-api-service/internal/client/operation_service/operation"
 	"finance-manager-api-service/internal/client/stats_service"
@@ -17,6 +18,7 @@ import (
 	"finance-manager-api-service/pkg/shutdown"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"net"
 	"net/http"
 	"os"
@@ -24,6 +26,17 @@ import (
 	"time"
 )
 
+// @Title		Finance-manager API
+// @Version		1.0
+// @Description	Finance-manager application
+
+// @Contact.name	Anton
+// @Contact.email	ap363402@gmail.com
+
+// @License.name Apache 2.0
+
+// @Host 		localhost:10000
+// @BasePath 	/api
 func main() {
 	logging.InitLogger()
 	logger := logging.GetLogger()
@@ -42,6 +55,10 @@ func main() {
 	jwtHelper := jwt.NewHelper(refreshTokenCache, logger)
 
 	logger.Info("create and register handlers")
+
+	logger.Info("swagger docs initializing")
+	router.Handler(http.MethodGet, "/swagger", http.RedirectHandler("/swagger/index.html", http.StatusMovedPermanently))
+	router.Handler(http.MethodGet, "/swagger/*any", httpSwagger.WrapHandler)
 
 	metricHandler := metric.NewHandler(logger)
 	metricHandler.Register(router)

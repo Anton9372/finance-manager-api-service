@@ -37,6 +37,19 @@ func (h *categoryHandler) Register(router *httprouter.Router) {
 	router.HandlerFunc(http.MethodDelete, categoryByIdURL, jwt.Middleware(apperror.Middleware(h.DeleteCategory)))
 }
 
+// CreateCategory
+// @Summary 	Create category
+// @Description Creates new category
+// @Security	JWTAuth
+// @Tags 		Category
+// @Accept		json
+// @Param 		input	body 	 category.CreateCategoryDTO	true	"Category data"
+// @Success 	201
+// @Failure 	401 		   						"Unauthorized"
+// @Failure 	400 	{object} apperror.AppError "Validation error"
+// @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 	{object} apperror.AppError "Internal server error"
+// @Router /categories [post]
 func (h *categoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -63,6 +76,19 @@ func (h *categoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request)
 	return nil
 }
 
+// GetCategories
+// @Summary 	Get user's categories
+// @Description Get list of categories belonging to user
+// @Security	JWTAuth
+// @Tags 		Category
+// @Produce 	json
+// @Param 		user_uuid 	path 	 string 	true   "User's uuid"
+// @Success 	200			{object} []category.Category "Categories"
+// @Failure 	401 		   						   "Unauthorized"
+// @Failure 	404 		{object} apperror.AppError "User not found"
+// @Failure 	418 		{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 		{object} apperror.AppError "Internal server error"
+// @Router 		/categories	[get]
 func (h *categoryHandler) GetCategories(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -82,6 +108,20 @@ func (h *categoryHandler) GetCategories(w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
+// PartiallyUpdateCategory
+// @Summary 	Update category
+// @Description Update category
+// @Security	JWTAuth
+// @Tags 		Category
+// @Accept		json
+// @Param 		uuid 		path 	 string 					true  "Category's uuid"
+// @Param 		input 		body 	 category.UpdateCategoryDTO true  "Category's data"
+// @Success 	204
+// @Failure 	401 		   					   "Unauthorized"
+// @Failure 	400 	{object} apperror.AppError "Validation error"
+// @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 	{object} apperror.AppError "Internal server error"
+// @Router /categories/:uuid [patch]
 func (h *categoryHandler) PartiallyUpdateCategory(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -103,6 +143,18 @@ func (h *categoryHandler) PartiallyUpdateCategory(w http.ResponseWriter, r *http
 	return nil
 }
 
+// DeleteCategory
+// @Summary 	Delete category
+// @Description Delete category
+// @Security	JWTAuth
+// @Tags 		Category
+// @Param 		uuid 	path 	 string 	true  "Category's uuid"
+// @Success 	204
+// @Failure 	401 		   						"Unauthorized"
+// @Failure 	404 	{object} apperror.AppError "Category is not found"
+// @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
+// @Failure 	500 	{object} apperror.AppError "Internal server error"
+// @Router /categories/:uuid [delete]
 func (h *categoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 

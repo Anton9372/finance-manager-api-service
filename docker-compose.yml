@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  app:
+    image: api-service:local
+    container_name: api-app
+    ports:
+      - "10000:10000"
+    networks:
+      - fm
+      - us
+      - os
+      - ss
+networks:
+  fm:
+  us:
+    name: user-service_us
+    external: true
+  os:
+    name: operation-service_os
+    external: true
+  ss:
+    name: stats-service_ss
+    external: true

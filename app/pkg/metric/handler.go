@@ -25,6 +25,12 @@ func (h *handler) Register(router *httprouter.Router) {
 	router.HandlerFunc(http.MethodGet, URL, h.Heartbeat)
 }
 
+// Heartbeat
+// @Summary 	Heartbeat
+// @Description Checks that the server is up and running
+// @Tags 		Heartbeat
+// @Success 	204
+// @Router 		/metric [get]
 func (h *handler) Heartbeat(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(204)
 }

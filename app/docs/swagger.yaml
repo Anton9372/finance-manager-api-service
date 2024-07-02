@@ -1,0 +1,608 @@
+basePath: /api
+definitions:
+  apperror.AppError:
+    properties:
+      code:
+        type: string
+      developer_message:
+        type: string
+      fields:
+        $ref: '#/definitions/apperror.ErrorFields'
+      message:
+        type: string
+      params:
+        $ref: '#/definitions/apperror.ErrorParams'
+    type: object
+  apperror.ErrorFields:
+    additionalProperties:
+      type: string
+    type: object
+  apperror.ErrorParams:
+    additionalProperties:
+      type: string
+    type: object
+  category.Category:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      user_uuid:
+        type: string
+      uuid:
+        type: string
+    type: object
+  category.CreateCategoryDTO:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      user_uuid:
+        type: string
+    type: object
+  category.UpdateCategoryDTO:
+    properties:
+      name:
+        type: string
+      uuid:
+        type: string
+    type: object
+  jwt.RefreshToken:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  jwt.TokenAndRefreshToken:
+    properties:
+      refresh_token:
+        type: string
+      token:
+        type: string
+    type: object
+  operation.CreateOperationDTO:
+    properties:
+      category_uuid:
+        type: string
+      description:
+        type: string
+      money_sum:
+        type: number
+    type: object
+  operation.Operation:
+    properties:
+      category_uuid:
+        type: string
+      date_time:
+        type: string
+      description:
+        type: string
+      money_sum:
+        type: number
+      uuid:
+        type: string
+    type: object
+  operation.UpdateOperationDTO:
+    properties:
+      category_uuid:
+        type: string
+      description:
+        type: string
+      money_sum:
+        type: number
+    type: object
+  stats_service.Operation:
+    properties:
+      category_uuid:
+        type: string
+      date_time:
+        type: string
+      description:
+        type: string
+      money_sum:
+        type: number
+      uuid:
+        type: string
+    type: object
+  stats_service.Report:
+    properties:
+      operations:
+        items:
+          $ref: '#/definitions/stats_service.Operation'
+        type: array
+      total_money_sum:
+        type: number
+    type: object
+  user_service.SignInUserDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  user_service.SignUpUserDTO:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      repeated_password:
+        type: string
+    type: object
+host: localhost:10000
+info:
+  contact:
+    email: ap363402@gmail.com
+    name: Anton
+  description: Finance-manager application
+  license:
+    name: Apache 2.0
+  title: Finance-manager API
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Auth user (POST) or update refresh token (PUT) and generate access
+        token.
+      parameters:
+      - description: User's data
+        in: body
+        name: user
+        schema:
+          $ref: '#/definitions/user_service.SignInUserDTO'
+      - description: RefreshToken
+        in: body
+        name: token
+        schema:
+          $ref: '#/definitions/jwt.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/jwt.TokenAndRefreshToken'
+        "400":
+          description: Bad request or invalid JSON body
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: 'Unauthorized: invalid credentials'
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Auth user and generate tokens or update refresh token
+      tags:
+      - Auth
+    put:
+      consumes:
+      - application/json
+      description: Auth user (POST) or update refresh token (PUT) and generate access
+        token.
+      parameters:
+      - description: User's data
+        in: body
+        name: user
+        schema:
+          $ref: '#/definitions/user_service.SignInUserDTO'
+      - description: RefreshToken
+        in: body
+        name: token
+        schema:
+          $ref: '#/definitions/jwt.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/jwt.TokenAndRefreshToken'
+        "400":
+          description: Bad request or invalid JSON body
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: 'Unauthorized: invalid credentials'
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Auth user and generate tokens or update refresh token
+      tags:
+      - Auth
+  /categories:
+    get:
+      description: Get list of categories belonging to user
+      parameters:
+      - description: User's uuid
+        in: path
+        name: user_uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Categories
+          schema:
+            items:
+              $ref: '#/definitions/category.Category'
+            type: array
+        "401":
+          description: Unauthorized
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Get user's categories
+      tags:
+      - Category
+    post:
+      consumes:
+      - application/json
+      description: Creates new category
+      parameters:
+      - description: Category data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/category.CreateCategoryDTO'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Create category
+      tags:
+      - Category
+  /categories/:uuid:
+    delete:
+      description: Delete category
+      parameters:
+      - description: Category's uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+        "404":
+          description: Category is not found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Delete category
+      tags:
+      - Category
+    patch:
+      consumes:
+      - application/json
+      description: Update category
+      parameters:
+      - description: Category's uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Category's data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/category.UpdateCategoryDTO'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Update category
+      tags:
+      - Category
+  /metric:
+    get:
+      description: Checks that the server is up and running
+      responses:
+        "204":
+          description: No Content
+      summary: Heartbeat
+      tags:
+      - Heartbeat
+  /operations:
+    post:
+      consumes:
+      - application/json
+      description: Creates new operation
+      parameters:
+      - description: Operation's data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/operation.CreateOperationDTO'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Create operation
+      tags:
+      - Operation
+  /operations/:uuid:
+    delete:
+      description: Delete operation
+      parameters:
+      - description: Operation's uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+        "404":
+          description: Operation is not found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Delete operation
+      tags:
+      - Operation
+    get:
+      description: Get operation by uuid
+      parameters:
+      - description: Operation's uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Operation
+          schema:
+            $ref: '#/definitions/operation.Operation'
+        "401":
+          description: Unauthorized
+        "404":
+          description: Operation not found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Get operation by uuid
+      tags:
+      - Operation
+    patch:
+      consumes:
+      - application/json
+      description: Update Operation
+      parameters:
+      - description: Operation's uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Operation's data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/operation.UpdateOperationDTO'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Update Operation
+      tags:
+      - Operation
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Register user
+      parameters:
+      - description: User's data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/user_service.SignUpUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/jwt.TokenAndRefreshToken'
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Register user
+      tags:
+      - Auth
+  /stats:
+    get:
+      description: Retrieves a list of operations with support for filtering and sorting.
+      parameters:
+      - description: User UUID
+        in: path
+        name: user_uuid
+        type: string
+      - description: 'Category name (supports operators: substr)'
+        in: path
+        name: category_name
+        type: string
+      - description: Category type
+        in: path
+        name: type
+        type: string
+      - description: Category ID
+        in: path
+        name: category_id
+        type: string
+      - description: 'Description (supports operators: substr)'
+        in: path
+        name: description
+        type: string
+      - description: 'Money sum (supports operators: eq, neq, lt, lte, gt, gte, between)'
+        in: path
+        name: money_sum
+        type: string
+      - description: 'Date and time of operation (supports operators: eq, between;
+          format: yyyy-mm-dd)'
+        in: path
+        name: date_time
+        type: string
+      - description: Field to sort by (money_sum, date_time, description)
+        in: path
+        name: sort_by
+        type: string
+      - description: Sort order (asc, desc)
+        in: path
+        name: sort_order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Report
+          schema:
+            $ref: '#/definitions/stats_service.Report'
+        "400":
+          description: Validation error in filter or sort parameters
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+        "418":
+          description: Something wrong with application logic
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - JWTAuth: []
+      summary: Get report about user's financial operations
+      tags:
+      - Stats
+swagger: "2.0"
