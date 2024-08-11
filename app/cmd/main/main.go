@@ -9,8 +9,10 @@ import (
 	"finance-manager-api-service/internal/client/user_service"
 	"finance-manager-api-service/internal/config"
 	"finance-manager-api-service/internal/handler/auth"
+	"finance-manager-api-service/internal/handler/categories"
 	"finance-manager-api-service/internal/handler/operations"
 	"finance-manager-api-service/internal/handler/stats"
+	"finance-manager-api-service/internal/handler/users"
 	"finance-manager-api-service/pkg/cache/freecache"
 	"finance-manager-api-service/pkg/jwt"
 	"finance-manager-api-service/pkg/logging"
@@ -63,12 +65,14 @@ func main() {
 	metricHandler := metric.NewHandler(logger)
 	metricHandler.Register(router)
 
-	userService := user_service.NewService(cfg.UserService.URL, "/users", logger)
+	userService := user_service.NewService(cfg.UserService.HttpUrl, "/users", logger)
 	authHandler := auth.NewAuthHandler(logger, userService, jwtHelper)
 	authHandler.Register(router)
+	userHandler := users.NewUserHandler(logger, userService)
+	userHandler.Register(router)
 
 	categoryService := category.NewService(cfg.OperationService.URL, "/categories", logger)
-	categoryHandler := operations.NewCategoryHandler(logger, categoryService)
+	categoryHandler := categories.NewCategoryHandler(logger, categoryService)
 	categoryHandler.Register(router)
 
 	operationService := operation.NewService(cfg.OperationService.URL, "/operations", logger)

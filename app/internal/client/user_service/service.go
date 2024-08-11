@@ -20,7 +20,7 @@ type UserService interface {
 	Create(ctx context.Context, dto SignUpUserDTO) (User, error)
 	GetByUUID(ctx context.Context, uuid string) (User, error)
 	GetByEmailAndPassword(ctx context.Context, email, password string) (User, error)
-	Update(ctx context.Context, uuid string, dto UpdateUserDTO) error
+	Update(ctx context.Context, dto UpdateUserDTO) error
 	Delete(ctx context.Context, uuid string) error
 }
 
@@ -173,14 +173,70 @@ func (c *client) GetByEmailAndPassword(ctx context.Context, email, password stri
 	return user, nil
 }
 
-func (c *client) Update(ctx context.Context, uuid string, dto UpdateUserDTO) error {
-	//TODO
-	c.base.Logger.Fatal("update user is not implemented yet")
-	return fmt.Errorf("update user is not implemented yet")
+func (c *client) Update(ctx context.Context, dto UpdateUserDTO) error {
+	c.base.Logger.Debug("Update user")
+
+	c.base.Logger.Debug("build url")
+	url, err := c.base.BuildURL(fmt.Sprintf("%s/%s", c.Resource+"/one", dto.UUID), nil)
+	if err != nil {
+		return fmt.Errorf("failed to build url: %w", err)
+	}
+	c.base.Logger.Tracef("url: %s", url)
+
+	c.base.Logger.Debug("marshal dto to bytes")
+	dataBytes, err := json.Marshal(dto)
+	if err != nil {
+		return fmt.Errorf("failed to marshal dto: %w", err)
+	}
+
+	c.base.Logger.Debug("create request")
+	req, err := http.NewRequest(http.MethodPatch, url, bytes.NewBuffer(dataBytes))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	c.base.Logger.Debug("send request")
+	reqCtx, cancel := context.WithTimeout(ctx, requestWaitTime)
+	defer cancel()
+	req = req.WithContext(reqCtx)
+	response, err := c.base.SendRequest(req)
+	if err != nil {
+		return fmt.Errorf("failed to send request: %w", err)
+	}
+
+	if !response.IsOk {
+		return apperror.APIError(response.Error.Code, response.Error.Message, response.Error.DeveloperMessage)
+	}
+	return nil
 }
 
 func (c *client) Delete(ctx context.Context, uuid string) error {
-	//TODO
-	c.base.Logger.Fatal("delete user is not implemented yet")
-	return fmt.Errorf("delete user is not implemented yet")
+	c.base.Logger.Info("Delete user")
+
+	c.base.Logger.Debug("build url")
+	url, err := c.base.BuildURL(fmt.Sprintf("%s/%s", c.Resource+"/one", uuid), nil)
+	if err != nil {
+		return fmt.Errorf("failed to build url: %w", err)
+	}
+	c.base.Logger.Tracef("url: %s", url)
+
+	c.base.Logger.Debug("create request")
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	c.base.Logger.Debug("send request")
+	reqCtx, cancel := context.WithTimeout(ctx, requestWaitTime)
+	defer cancel()
+	req = req.WithContext(reqCtx)
+	response, err := c.base.SendRequest(req)
+	if err != nil {
+		return fmt.Errorf("failed to send request: %w", err)
+	}
+
+	if !response.IsOk {
+		return apperror.APIError(response.Error.Code, response.Error.Message, response.Error.DeveloperMessage)
+	}
+	return nil
 }

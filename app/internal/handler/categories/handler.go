@@ -1,4 +1,4 @@
-package operations
+package categories
 
 import (
 	"encoding/json"
@@ -117,8 +117,9 @@ func (h *categoryHandler) GetCategories(w http.ResponseWriter, r *http.Request) 
 // @Param 		uuid 		path 	 string 					true  "Category's uuid"
 // @Param 		input 		body 	 category.UpdateCategoryDTO true  "Category's data"
 // @Success 	204
-// @Failure 	401 		   					   "Unauthorized"
 // @Failure 	400 	{object} apperror.AppError "Validation error"
+// @Failure 	401 		   					   "Unauthorized"
+// @Failure 	404 	{object} apperror.AppError "Category is not found"
 // @Failure 	418 	{object} apperror.AppError "Something wrong with application logic"
 // @Failure 	500 	{object} apperror.AppError "Internal server error"
 // @Router /categories/:uuid [patch]

@@ -16,7 +16,8 @@ type Config struct {
 		Port   string `yaml:"port" env-default:"8080"`
 	}
 	UserService struct {
-		URL string `yaml:"url" env-required:"true"`
+		HttpUrl string `yaml:"http_url" env-required:"true"`
+		GrpcUrl string `yaml:"grpc_url" env-required:"true"`
 	} `yaml:"user_service" env-required:"true"`
 	OperationService struct {
 		URL string `yaml:"url" env-required:"true"`
