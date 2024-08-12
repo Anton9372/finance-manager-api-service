@@ -10,14 +10,21 @@ type Config struct {
 	JWT struct {
 		Secret string `yaml:"secret" env-required:"true"`
 	}
-	Listen struct {
-		Type   string `yaml:"type" env-default:"port"`
-		BindIP string `yaml:"bind_ip" env-default:"localhost"`
-		Port   string `yaml:"port" env-default:"8080"`
-	}
+	HTTP struct {
+		IP   string `yaml:"ip"`
+		Port int    `yaml:"port"`
+		CORS struct {
+			AllowedMethods   []string `yaml:"allowed_methods"`
+			AllowedOrigins   []string `yaml:"allowed_origins"`
+			AllowCredentials bool     `yaml:"allow_credentials"`
+			AllowedHeaders   []string `yaml:"allowed_headers"`
+			ExposedHeaders   []string `yaml:"exposed_headers"`
+		} `yaml:"cors"`
+	} `yaml:"http"`
 	UserService struct {
-		HttpUrl string `yaml:"http_url" env-required:"true"`
-		GrpcUrl string `yaml:"grpc_url" env-required:"true"`
+		HttpUrl         string `yaml:"http_url" env-required:"true"`
+		GrpcUrl         string `yaml:"grpc_url" env-required:"true"`
+		ConnectWithGRPC bool   `yaml:"connect_with_grpc"`
 	} `yaml:"user_service" env-required:"true"`
 	OperationService struct {
 		URL string `yaml:"url" env-required:"true"`

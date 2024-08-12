@@ -1,10 +1,11 @@
-package user_service
+package user_service_http
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"finance-manager-api-service/internal/apperror"
+	"finance-manager-api-service/internal/client/user_service"
 	"finance-manager-api-service/pkg/logging"
 	"finance-manager-api-service/pkg/rest"
 	"finance-manager-api-service/pkg/utils"
@@ -16,20 +17,12 @@ import (
 
 const requestWaitTime = 5 * time.Second
 
-type UserService interface {
-	Create(ctx context.Context, dto SignUpUserDTO) (User, error)
-	GetByUUID(ctx context.Context, uuid string) (User, error)
-	GetByEmailAndPassword(ctx context.Context, email, password string) (User, error)
-	Update(ctx context.Context, dto UpdateUserDTO) error
-	Delete(ctx context.Context, uuid string) error
-}
-
 type client struct {
 	base     rest.BaseClient
 	Resource string
 }
 
-func NewService(baseURL string, resource string, logger *logging.Logger) UserService {
+func NewService(baseURL string, resource string, logger *logging.Logger) user_service.UserService {
 	return &client{
 		Resource: resource,
 		base: rest.BaseClient{
@@ -42,9 +35,9 @@ func NewService(baseURL string, resource string, logger *logging.Logger) UserSer
 	}
 }
 
-func (c *client) Create(ctx context.Context, dto SignUpUserDTO) (User, error) {
+func (c *client) Create(ctx context.Context, dto user_service.SignUpUserDTO) (user_service.User, error) {
 	c.base.Logger.Info("Create user")
-	var user User
+	var user user_service.User
 
 	c.base.Logger.Debug("build url")
 	url, err := c.base.BuildURL(c.Resource, nil)
@@ -90,9 +83,9 @@ func (c *client) Create(ctx context.Context, dto SignUpUserDTO) (User, error) {
 	return user, err
 }
 
-func (c *client) GetByUUID(ctx context.Context, uuid string) (User, error) {
+func (c *client) GetByUUID(ctx context.Context, uuid string) (user_service.User, error) {
 	c.base.Logger.Info("Get user by uuid")
-	var user User
+	var user user_service.User
 
 	c.base.Logger.Debug("build url")
 	url, err := c.base.BuildURL(fmt.Sprintf("%s/%s", c.Resource+"/one", uuid), nil)
@@ -126,9 +119,9 @@ func (c *client) GetByUUID(ctx context.Context, uuid string) (User, error) {
 	return user, nil
 }
 
-func (c *client) GetByEmailAndPassword(ctx context.Context, email, password string) (User, error) {
+func (c *client) GetByEmailAndPassword(ctx context.Context, email, password string) (user_service.User, error) {
 	c.base.Logger.Info("Get user by email and password")
-	var user User
+	var user user_service.User
 
 	filters := []rest.FilterOptions{
 		{
@@ -173,7 +166,7 @@ func (c *client) GetByEmailAndPassword(ctx context.Context, email, password stri
 	return user, nil
 }
 
-func (c *client) Update(ctx context.Context, dto UpdateUserDTO) error {
+func (c *client) Update(ctx context.Context, dto user_service.UpdateUserDTO) error {
 	c.base.Logger.Debug("Update user")
 
 	c.base.Logger.Debug("build url")

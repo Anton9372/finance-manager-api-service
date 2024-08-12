@@ -7,6 +7,8 @@ import (
 	"finance-manager-api-service/internal/client/operation_service/operation"
 	"finance-manager-api-service/internal/client/stats_service"
 	"finance-manager-api-service/internal/client/user_service"
+	user_service_grpc "finance-manager-api-service/internal/client/user_service/grpc/v1"
+	"finance-manager-api-service/internal/client/user_service/http"
 	"finance-manager-api-service/internal/config"
 	"finance-manager-api-service/internal/handler/auth"
 	"finance-manager-api-service/internal/handler/categories"
@@ -20,6 +22,7 @@ import (
 	"finance-manager-api-service/pkg/shutdown"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"net"
 	"net/http"
@@ -65,7 +68,18 @@ func main() {
 	metricHandler := metric.NewHandler(logger)
 	metricHandler.Register(router)
 
-	userService := user_service.NewService(cfg.UserService.HttpUrl, "/users", logger)
+	var userService user_service.UserService
+	if cfg.UserService.ConnectWithGRPC == true {
+		var err error
+		logger.Info("connect to user service through grpc")
+		userService, err = user_service_grpc.NewClient(cfg.UserService.GrpcUrl, logger)
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
+	} else {
+		logger.Info("connect to user service through http")
+		userService = user_service_http.NewService(cfg.UserService.HttpUrl, "/users", logger)
+	}
 	authHandler := auth.NewAuthHandler(logger, userService, jwtHelper)
 	authHandler.Register(router)
 	userHandler := users.NewUserHandler(logger, userService)
@@ -88,15 +102,26 @@ func main() {
 }
 
 func start(router *httprouter.Router, logger *logging.Logger, cfg *config.Config) {
-	logger.Infof("bind application to host: %s and port: %s", cfg.Listen.BindIP, cfg.Listen.Port)
+	logger.Infof("bind application to host: %s and port: %d", cfg.HTTP.IP, cfg.HTTP.Port)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", cfg.HTTP.IP, cfg.HTTP.Port))
 	if err != nil {
 		logger.Fatal(err)
 	}
 
+	c := cors.New(cors.Options{
+		AllowedMethods:   cfg.HTTP.CORS.AllowedMethods,
+		AllowedOrigins:   cfg.HTTP.CORS.AllowedOrigins,
+		AllowCredentials: cfg.HTTP.CORS.AllowCredentials,
+		AllowedHeaders:   cfg.HTTP.CORS.AllowedHeaders,
+		ExposedHeaders:   cfg.HTTP.CORS.ExposedHeaders,
+	})
+
+	handler := c.Handler(router)
+
 	server := &http.Server{
-		Handler:      router,
+		Handler: handler,
+		//TODO to config
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

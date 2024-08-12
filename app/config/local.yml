@@ -1,13 +1,37 @@
 jwt:
   secret: $3cr3t
-listen:
-  type: port
-  bind_ip: 0.0.0.0
+
+http:
+  ip: 0.0.0.0
   port: 10000
+  cors:
+    allowed-methods: [ "GET", "POST", "PATCH", "PUT", "DELETE" ]
+    allowed-origins:
+      - "http://localhost:3000"
+    allow-credentials: true
+    allowed-headers:
+      - "Authorization"
+      - "Location"
+      - "Charset"
+      - "Access-Control-Allow-Origin"
+      - "Content-Type"
+      - "Origin"
+      - "Accept"
+      - "Content-Length"
+      - "Accept-Encoding"
+      - "X-CSRF-Token"
+    exposed-headers:
+      - "Location"
+      - "Authorization"
+      - "Content-Disposition"
+
 user_service:
   http_url: http://localhost:10001/api
-  grpc_url: http://localhost:10011
+  grpc_url: 0.0.0.0:10011
+  connect_with_grpc: true
 operation_service:
   url: http://localhost:10002/api
 stats_service:
   url: http://localhost:10003/api
+
+

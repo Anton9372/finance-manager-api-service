@@ -6,17 +6,20 @@ This application is a web service for managing and counting the user's financial
 
 The service provides api-gateway for managing transaction categories, financial transactions and calculating statistics
 
-The service consists of several microservices communicating with each other using the http protocol:
-- [user-service](https://github.com/Anton9372/user-service) - service for managing users
+The service consists of several microservices:
+- [user-service](https://github.com/Anton9372/user-service) - Manages user-related operations and communicates using gRPC. View the gRPC contracts [here](https://github.com/Anton9372/user-service-contracts).
 
-- [operation-service](https://github.com/Anton9372/operation-service) - service for managing categories and transactions
+- [operation-service](https://github.com/Anton9372/operation-service) - Manages categories and transactions through HTTP
 
-- [stats-service](https://github.com/Anton9372/stats-service) - service for obtaining statistics and report on financial operations
+- [stats-service](https://github.com/Anton9372/stats-service) - Provides statistics and reports on financial operations via HTTP.
 
-Detailed information about the api can be found at `http://localhost:10000/swagger`
+Detailed information about the api can be found at `http://host:port/swagger`
 
 ## List of technologies
+
 - Golang net/http
+- gRPC
+- Protocol Buffers
 - PostgreSQL
 - Docker
 - JWT
